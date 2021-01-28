@@ -26,4 +26,9 @@ compatible) http://docs.python.org/2/library/socketserver.html
 
 Sources
 ========================
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+* For status code information
+
+https://docs.python.org/3/library/exceptions.html
+* For exception handling
 

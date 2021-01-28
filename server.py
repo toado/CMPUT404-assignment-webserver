@@ -28,11 +28,60 @@ import socketserver
 
 
 class MyWebServer(socketserver.BaseRequestHandler):
-    
+
     def handle(self):
+        # Parse the (decoded) data and handle request accordingly
+        # @Source: https://stackoverflow.com/a/39090882 By User "Liam Kelly"
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        self.request.sendall(bytearray("OK",'utf-8'))
+        request_header = self.data.decode().split("\r\n")
+        method, path, protocol = request_header[0].split(" ")
+        host = ""
+        
+        # Get the host to redirect to in a 301 error
+        for header in request_header:
+            if "Host" in header:
+                host = header.split(": ")[1]
+                break
+        # print(request_header)
+        # print(f"HTTP Method: {method}\nRequested Path: {path}\n")
+        # print(f"Host: {host}\n")
+
+        if method == "GET":
+            # Do according to path
+            if path[-1] == "/": 
+                path += "index.html"
+            
+            # Serving HTML files
+            # @Source: https://stackoverflow.com/a/21153368 By User "falsetru"
+            # @Source: https://stackoverflow.com/a/46109539 By User "nalyd88"
+            try:
+                html_file = "www" + path 
+                if path.endswith("html"):
+                    content_type = "text/html"
+                elif path.endswith("css"):
+                    content_type = "text/css"
+
+                with open(html_file, "r") as file:
+                    # Remember to close off response header (extra "\r\n")
+                    self.request.sendall("HTTP/1.1 200 OK\r\nContent-Type: {}\r\n\r\n".format(content_type).encode())
+                    self.request.sendall(file.read().encode())
+
+            # Handle OSError subclass accordingly
+            # @Source: https://docs.python.org/3/library/exceptions.html
+            except FileNotFoundError:
+                self.request.sendall("HTTP/1.1 404 Not Found\r\n\n".encode())
+                self.request.sendall("<html><h1>404 Not Found</h1></html>".encode())
+            
+            # Redirecting
+            # @Source: https://stackoverflow.com/a/50607924 By User "Dominic Roy-Stang"
+            except PermissionError:
+                self.request.sendall("HTTP/1.1 301 Moved Permanently\r\nLocation: http://{}/{}\r\n\n".format(host, path).encode())
+
+        # Requirement: Return status code "405" if HTTP method not GET
+        else:
+            self.request.sendall("HTTP/1.1 405 Method Not Allowed\r\n".encode())
+            return
+
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
