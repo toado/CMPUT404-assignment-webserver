@@ -44,7 +44,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 break
 
         # print(request_header)
-        # print(f"HTTP Method: {method}\nRequested Path: {path}\n")
+        # print(f"HTTP Method: {method}\nRequested Path: {path}")
         # print(f"Host: {host}\n")
 
         if method == "GET":
@@ -76,10 +76,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.request.sendall("HTTP/1.1 404 Not Found\r\n\n".encode())
                 self.request.sendall("<html><h1>404 Not Found</h1></html>".encode())
             
-            # Redirecting
+            # Redirecting -- general OSError because different computers had different errors for this one...
             # @Source: https://stackoverflow.com/a/50607924 By User "Dominic Roy-Stang"
-            except PermissionError:
-                self.request.sendall("HTTP/1.1 301 Moved Permanently\r\nLocation: http://{}/{}\r\n\n".format(host, path).encode())
+            except OSError:
+                self.request.sendall("HTTP/1.1 301 Moved Permanently\r\nLocation: http://{}{}/\r\n\n".format(host, path).encode())
 
         # Requirement: Return status code "405" if HTTP method not GET
         else:
