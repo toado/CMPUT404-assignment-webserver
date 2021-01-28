@@ -42,26 +42,30 @@ class MyWebServer(socketserver.BaseRequestHandler):
             if "Host" in header:
                 host = header.split(": ")[1]
                 break
+
         # print(request_header)
         # print(f"HTTP Method: {method}\nRequested Path: {path}\n")
         # print(f"Host: {host}\n")
 
         if method == "GET":
-            # Do according to path
+            # Link default page 
             if path[-1] == "/": 
                 path += "index.html"
             
-            # Serving HTML files
+            # Serving files
             # @Source: https://stackoverflow.com/a/21153368 By User "falsetru"
             # @Source: https://stackoverflow.com/a/46109539 By User "nalyd88"
             try:
-                html_file = "www" + path 
+                file_path = "www" + path 
+                if "..." in file_path: raise FileNotFoundError
+                
+                # Get content type in accordance with file type to be served
                 if path.endswith("html"):
                     content_type = "text/html"
                 elif path.endswith("css"):
                     content_type = "text/css"
 
-                with open(html_file, "r") as file:
+                with open(file_path, "r") as file:
                     # Remember to close off response header (extra "\r\n")
                     self.request.sendall("HTTP/1.1 200 OK\r\nContent-Type: {}\r\n\r\n".format(content_type).encode())
                     self.request.sendall(file.read().encode())

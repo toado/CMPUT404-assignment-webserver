@@ -32,3 +32,19 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 https://docs.python.org/3/library/exceptions.html
 * For exception handling
 
+https://stackoverflow.com/a/39090882 
+* For parsing HTTP requests
+* By User "Liam Kelly"
+
+https://stackoverflow.com/a/21153368
+* For serving/sending HTML
+* By User "falsetru"
+
+https://stackoverflow.com/a/46109539
+* For serving/sending an HTML file
+* By User "nalyd88"
+
+https://stackoverflow.com/a/50607924
+* For redirecting upon a 301 status code
+* By User "Dominic Roy-Stang"
+
