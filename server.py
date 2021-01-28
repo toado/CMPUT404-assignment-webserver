@@ -35,7 +35,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         self.data = self.request.recv(1024).strip()
         request_header = self.data.decode().split("\r\n")
         method, path, protocol = request_header[0].split(" ")
-        host = ""
+        host, content_type = "", ""
         
         # Get the host to redirect to in a 301 error
         for header in request_header:
@@ -57,7 +57,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # @Source: https://stackoverflow.com/a/46109539 By User "nalyd88"
             try:
                 file_path = "www" + path 
-                if "..." in file_path: raise FileNotFoundError
+                if ".." in file_path: raise FileNotFoundError
                 
                 # Get content type in accordance with file type to be served
                 if path.endswith("html"):
@@ -73,13 +73,13 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # Handle OSError subclass accordingly
             # @Source: https://docs.python.org/3/library/exceptions.html
             except FileNotFoundError:
-                self.request.sendall("HTTP/1.1 404 Not Found\r\n\n".encode())
-                self.request.sendall("<html><h1>404 Not Found</h1></html>".encode())
+                self.request.sendall("HTTP/1.1 404 Not Found\r\n".encode())
+                self.request.sendall("\n<html><h1>404 Not Found</h1></html>".encode())
             
             # Redirecting -- general OSError because different computers had different errors for this one...
             # @Source: https://stackoverflow.com/a/50607924 By User "Dominic Roy-Stang"
             except OSError:
-                self.request.sendall("HTTP/1.1 301 Moved Permanently\r\nLocation: http://{}{}/\r\n\n".format(host, path).encode())
+                self.request.sendall("HTTP/1.1 301 Moved Permanently\r\nLocation: http://{}{}/\r\n".format(host, path).encode())
 
         # Requirement: Return status code "405" if HTTP method not GET
         else:
