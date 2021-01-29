@@ -27,7 +27,7 @@ compatible) http://docs.python.org/2/library/socketserver.html
 
 Sources & Collaborators
 ========================
-Spoke with Justin Mah (CCID: jmm) about a request header bug.
+Spoke with Justin Mah (CCID: jmm) about a request header bug. Spoke with Ny Thi Tran (CCID: tntran1) about a test case (the security one in not-free-test.py).
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 * For status code information
